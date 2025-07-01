@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>React Auth Context CDN</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; }
+    header, footer { padding: 10px; background: #222; color: #fff; }
+    main { padding: 20px; text-align: center; }
+    button { padding: 6px 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/javascript">
+    const { useState, createContext, useContext } = React;
+
+    // 1. Create Context
+    const AuthContext = createContext();
+
+    // 2. Create Provider
+    function AuthProvider({ children }) {
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+      const toggleAuth = () => setIsLoggedIn(prev => !prev);
+
+      return (
+        <AuthContext.Provider value={{ isLoggedIn, toggleAuth }}>
+          {children}
+        </AuthContext.Provider>
+      );
+    }
+
+    // 3. Navbar
+    function Navbar() {
+      const { isLoggedIn, toggleAuth } = useContext(AuthContext);
+
+      return (
+        <header>
+          <span>🔐 Auth App</span>
+          <button onClick={toggleAuth} style={{ float: 'right' }}>
+            {isLoggedIn ? 'Logout' : 'Login'}
+          </button>
+        </header>
+      );
+    }
+
+    // 4. Main Component
+    function Main() {
+      const { isLoggedIn } = useContext(AuthContext);
+      return (
+        <main>
+          <h2>{isLoggedIn ? '✅ You are logged in!' : '❌ You are logged out.'}</h2>
+        </main>
+      );
+    }
+
+    // 5. Footer Component
+    function Footer() {
+      const { isLoggedIn } = useContext(AuthContext);
+      return (
+        <footer>
+          {isLoggedIn ? '👋 Welcome, User' : '⚠️ Please log in'}
+        </footer>
+      );
+    }
+
+    // 6. App
+    function App() {
+      return (
+        <>
+          <Navbar />
+          <Main />
+          <Footer />
+        </>
+      );
+    }
+
+    // 7. Render
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    );
+  </script>
+</body>
+</html>
